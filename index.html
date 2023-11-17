@@ -8,6 +8,26 @@
   <link rel="stylesheet" type="text/css" href="style.css">
   <style>
 
+.full-width-images {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+
+.small-images {
+  display: flex;
+  justify-content: space-between;
+}
+
+.smaller-images {
+  max-width: 800px; /* Adjust the max-width as needed */
+  max-height: 600px;
+  margin-right: 10px; /* Add some margin between the images */
+}
+
     #animation {
       position: fixed;
       top: 0;
@@ -348,16 +368,18 @@ nav li {
           break;
         case 3:
           content = `
-<img src="sco.png" alt="Image 1" onclick="displayPDF('منهج كشافة.pdf')">
-<img src="mor.png" alt="Image 2" onclick="displayPDF('مناهج المرشدات.pdf')">
-<img src="zha.png" alt="Image 3" onclick="displayPDF('مناهج مصر للزهرات ج.pdf')">
-<img src="ash.png" alt="Image 4" onclick="displayPDF('منهج اشبال.pdf')">
-<img src="jwala.png" alt="Image 5" onclick="displayPDF('مناهج الجوال.pdf')">
-<img src="jwal.png" alt="Image 6" onclick="displayPDF('مناهج الجوال.pdf')">
-
-<div id="pdf-container">
-    <embed id="pdf" type="application/pdf" width="100%" height="800%">
+<div class="full-width-images">
+<img src="sco.png" alt="Image 1" onclick="displayPDF('منهج كشافة.pdf')" class="smaller-images" >
+<img src="mor.png" alt="Image 2" onclick="displayPDF('مناهج المرشدات.pdf')" class="smaller-images" >
+<img src="zha.png" alt="Image 3" onclick="displayPDF('مناهج مصر للزهرات ج.pdf')" class="smaller-images" >
+<img src="ash.png" alt="Image 4" onclick="displayPDF('منهج اشبال.pdf')" class="smaller-images" >
+<img src="jwala.png" alt="Image 5" onclick="displayPDF('مناهج الجوال.pdf')" class="smaller-images" >
+<img src="jwal.png" alt="Image 6" onclick="displayPDF('مناهج الجوال.pdf')" class="smaller-images" >
 </div>
+
+    <div id="pdf-container" style="position: relative;">
+      <embed id="pdf" type="application/pdf" width="100%" height="800%">
+    </div>
           `;
           break;
         case 4:
@@ -445,11 +467,6 @@ nav li {
     height: 100px;
   }
 
-  .center-images {
-    display: flex;
-    justify-content: center;
-  }
-
 
   </style>
 
@@ -499,19 +516,53 @@ function displayPosts() {
 
 
     
-        function displayPDF(pdfFile) {
-        // Hide all images
-        document.querySelectorAll('img').forEach(img => {
-            img.style.display = 'none';
-        });
+// Function to display PDF
+function displayPDF(pdfFile) {
+  // Create a new div for the PDF viewer
+  var pdfViewer = document.createElement('div');
+  pdfViewer.id = 'pdf-viewer';
+  pdfViewer.style.display = 'flex';
+  pdfViewer.style.justifyContent = 'center';
+  pdfViewer.style.alignItems = 'center';
 
-        // Display the PDF container
-        document.getElementById('pdf-container').style.display = 'block';
+  // Create an embed element for the PDF
+  var pdfEmbed = document.createElement('embed');
+  pdfEmbed.id = 'pdf';
+  pdfEmbed.type = 'application/pdf';
+  pdfEmbed.width = '100%';
+  pdfEmbed.height = '800px';
+  pdfEmbed.src = pdfFile;
 
-        // Load and display the PDF
-        var pdfEmbed = document.getElementById('pdf');
-        pdfEmbed.src = pdfFile;
-    }
+  // Append the PDF embed element to the PDF viewer div
+  pdfViewer.appendChild(pdfEmbed);
+
+  // Append the PDF viewer div to the body
+  document.body.appendChild(pdfViewer);
+
+  // Add click event listener to close PDF when clicking outside
+  document.body.addEventListener('click', closePDFOutside);
+}
+
+// Function to close PDF when clicking outside
+function closePDFOutside(event) {
+  const pdfViewer = document.getElementById('pdf-viewer');
+  const pdfContainer = document.getElementById('pdf-container');
+  
+  // Check if the click is outside the PDF container
+  if (pdfViewer.contains(event.target) || pdfContainer.contains(event.target)) {
+    return;
+  }
+
+  // Close the PDF
+  hidePdf();
+}
+
+// Function to hide PDF
+function hidePdf() {
+  document.querySelector('#pdf-viewer').style.display = 'none';
+  document.querySelector('#pdf-frame').src = '';
+}
+
 
   // Function to go back to the library
   function hidePdf() {
@@ -528,6 +579,12 @@ function displayPosts() {
       showPdf(pdfFileName);
     });
   });
+
+function goBackToCase3() {
+  changeContent(3);
+  document.getElementById('pdf-container').style.display = 'none';
+}
+
 
 </script>
 
